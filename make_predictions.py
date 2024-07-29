@@ -325,7 +325,7 @@ async def main2(timeframe,pages):
     for symbol in symbol_list:
         print(symbol)
         trades =await connection.get_positions()#connection.get_orders()
-        if len(trades)>=50:
+        if len(trades)>=10:
             pass
 
         else:
