@@ -49,7 +49,7 @@ symbol_list = [
     'BTCUSDm'
 
 ]
-timeframe='15m'
+timeframe='30m'
 pages=7
 n_estimators=7
 min_samples_leaf=1
@@ -80,8 +80,8 @@ def generate_new_features(df,column1,column2):
 
     # Logarithm and Exponential
     
-
     df[column1] = df[column1].apply(lambda x: x if x > 1e-40 else 1e-40)  # Replace non-positive values
+    
     df[column2] = df[column2].apply(lambda x: x if x > 1e-40 else 1e-40)  # Replace non-positive values
 
     # Trigonometric Functions
@@ -217,27 +217,25 @@ def add_stop_losse(df):
     df['buy_low']= df['buy_low'].fillna(1)
     df['sell_low']= df['sell_low'].fillna(1)
     df['buy_high']= df['buy_high'].fillna(1)
-
-    #df['RSI'] = ta.rsi(df['close'], length=14)
-    
-
-
+    df['return'] = df['close'].pct_change()
+    df['volatility'] = df['return'].rolling(window=10).std()
+    df['moving_avg'] = df['close'].rolling(window=10).mean()
     # Drop the individual Sell_High and Buy_Low columns
     #df.drop(columns=['sell_high', 'buy_low',], inplace=True)
     return df
-
 
 def prepare(df):
     df=add_stop_losse(df)
     df=df.drop(columns=['symbol','timeframe','brokerTime'])
 
     df['time'] = pd.to_datetime(df['time'])
-    df['time'] = df['time'].astype(int) // 10
+    df['time'] = df['time'].astype(int) #// 10**99 
     # Generate new features and handle data preparation
     df_new =df
     #print(df_new)
+    #print(df.columns)
     # Columns to consider
-    columns = ['time', 'open', 'high', 'low', 'close', 'tickVolume','stop_losses', 'trade_max']#['high', 'low', 'close', 'open', 'tickVolume','time','stop_losses','sell_high','trade_max']
+    columns = ['high', 'low', 'close', 'open', 'tickVolume','time','stop_losses','trade_max','sell_high','sell_low','buy_low','buy_high']
 
     # Generate combinations of 2 pairs
     combinations_2 = list(combinations(columns, 2))
@@ -247,7 +245,7 @@ def prepare(df):
         first_member, second_member = comb
         df_new = generate_new_features(df_new,first_member,second_member)
     
-    #time=df_new['time']
+    time=df_new['time']
     df_new = df_new.dropna()  # Drop NaN values
 
     # Round numerical columns based on decimal places of the last 'close' value
@@ -270,7 +268,6 @@ def prepare(df):
     #print(df_new.drop(columns=['Prediction']))
     #df_new.drop(columns=columns_to_drop)
     return df_new
-
 
 async def get_candles_m(timeframe,symbol,pages):
     api = MetaApi(token)

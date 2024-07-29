@@ -25,13 +25,27 @@ from datetime import datetime, timedelta
 token = os.getenv('TOKEN') or 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlNWZkNGRkYWZmZmIyMDk2YTAyMWYzNjZiY2YxYjYwYSIsInBlcm1pc3Npb25zIjpbXSwiYWNjZXNzUnVsZXMiOlt7ImlkIjoidHJhZGluZy1hY2NvdW50LW1hbmFnZW1lbnQtYXBpIiwibWV0aG9kcyI6WyJ0cmFkaW5nLWFjY291bnQtbWFuYWdlbWVudC1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1yZXN0LWFwaSIsIm1ldGhvZHMiOlsibWV0YWFwaS1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1ycGMtYXBpIiwibWV0aG9kcyI6WyJtZXRhYXBpLWFwaTp3czpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1yZWFsLXRpbWUtc3RyZWFtaW5nLWFwaSIsIm1ldGhvZHMiOlsibWV0YWFwaS1hcGk6d3M6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6Im1ldGFzdGF0cy1hcGkiLCJtZXRob2RzIjpbIm1ldGFzdGF0cy1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoicmlzay1tYW5hZ2VtZW50LWFwaSIsIm1ldGhvZHMiOlsicmlzay1tYW5hZ2VtZW50LWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJjb3B5ZmFjdG9yeS1hcGkiLCJtZXRob2RzIjpbImNvcHlmYWN0b3J5LWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJtdC1tYW5hZ2VyLWFwaSIsIm1ldGhvZHMiOlsibXQtbWFuYWdlci1hcGk6cmVzdDpkZWFsaW5nOio6KiIsIm10LW1hbmFnZXItYXBpOnJlc3Q6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6ImJpbGxpbmctYXBpIiwibWV0aG9kcyI6WyJiaWxsaW5nLWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19XSwidG9rZW5JZCI6IjIwMjEwMjEzIiwiaW1wZXJzb25hdGVkIjpmYWxzZSwicmVhbFVzZXJJZCI6ImU1ZmQ0ZGRhZmZmYjIwOTZhMDIxZjM2NmJjZjFiNjBhIiwiaWF0IjoxNzE4NjAwMTc5fQ.P_Q7S9gllY-A0ygrF72pmpyUrno0VZ6_gBXIT31fLOwKFcEEeqopfcEH7yUL6upwTe69YAitfuy3OcDfjBNL7D7Vnuh1FUUUb2EbuGEnBi-B3GSazhZ83uSeAa89zutuNsr7DrptYf-ZHIUw10NSbIHZjhTKOsT9GoV-lv6QLsaxe87wJ8hbv5ajWvo2VKYhJKv0fQFDP2SwsboGnjC4ioqMGoGFhAv2BNLs3nXZL8SWe0tEYIcLmfWB1sWTlPDrsnaOzRdyOzUwbRljoJzns1BUyHW375eQTR93oNjN_P1zJNL9J_V8rqc-nIJcQPhIFytwaFDy-Z3DJHZQJk6mAbDLkphjQAvGeXrwjjk_uQNuY0WzmJmv21dFeQ3aFJhW-wH7l_KYEYjwqxP_H2lU0_AXpiGxn0ZWOoRbyp2Uer8X2hBg_psUd7RlhmfVqXQqTkJLpFpZrP980rq1S_deFWWiZPihXqkzTsFwUTl2DWMyuTxwsQnCBi-Dbt11XY-1kXe7uABqL9L6YbaclohAUVQF1pIVONbELTkTzUqfzqf30TLsxT67xScvd51-smHTDBYyvSDjzWLQ-HCl9gMJlZ43NcJtA9fckE47yf7O5YaaaA3QXhNSO86jiDvJ_spVijZXi62P_d4d71fCpUZTum1WSwRAiF5scvIjwFMSL98'
 accountId = os.getenv('ACCOUNT_ID') or '653d65c4-a70f-49ac-a6de-deea63238808'
 #symbol_list =['EURUSDm', 'GBPUSDm','AUDCHFm', 'NZDUSDm','GBPTRYm','XAUUSDm','XAGUSDm',]
-symbol_list =[
+symbol_list = [
+    'EURUSDm',  # Euro/US Dollar (Major)
+    'GBPUSDm',  # British Pound/US Dollar (Major)
+    'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
+    'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
+    'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'XAGUSDm',  # Silver/US Dollar (Commodity)
+    'USDCHFm',  # US Dollar/Swiss Franc (Major)
+    'AUDUSDm',  # Australian Dollar/US Dollar (Major)
+    'EURGBPm',  # Euro/British Pound (Minor)
+    'GBPCHFm',  # British Pound/Swiss Franc (Minor)
     'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
     'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
     'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
+    'EURCADm',  # Euro/Canadian Dollar (Minor)
     'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    ]
+    'BTCUSDm'
+
+]
 data = {}
 timeframe='15m'
 pages=7
@@ -263,14 +277,14 @@ def prepare(df):
     df_new = df_new.loc[:, ~inf_mask.any()]
 
     # Set a threshold for numerical columns
-    threshold = 1e30  # Adjust the threshold as needed
+    threshold = 1e40  # Adjust the threshold as needed
 
     # Filter columns where all values are greater than the threshold
     columns_to_drop = df_new.select_dtypes(include=np.number).columns[(df_new.select_dtypes(include=np.number) > threshold).all()]
     #df_new['time']=time
     #print(columns_to_drop)
     #print(df_new.drop(columns=['Prediction']))
-    #df_new.drop(columns=columns_to_drop)
+    df_new.drop(columns=columns_to_drop)
     return df_new
 async def main2(timeframe,pages):
     print('Up and runing')
@@ -302,7 +316,7 @@ async def main2(timeframe,pages):
                 y_close= df_new['Candle_close']
                 y_low=df_new['Canlde_low']
                 y_high=df_new['Canlde_high']
-
+                print(len(X.columns))
                 #print(X.columns)
                 column_list=[]
                 for column in X.columns:
@@ -321,6 +335,7 @@ async def main2(timeframe,pages):
                 )
                 last_row= transformer.fit_transform(dt)
                 last_row = np.array(last_row[-1]).reshape(1, -1)
+                print(last_row)
                 #print(last_row)
                 # One-hot encode the 'binned_column1' feature
                 transformer = ColumnTransformer(
@@ -440,7 +455,7 @@ async def main2(timeframe,pages):
 
         except Exception as e:
             #print(f'{symbol} failed')
-            #raise e
+            raise e
             pass
         # Call the function to add the nested dictionary content to the .docx file
     add_nested_dict_to_docx(data)

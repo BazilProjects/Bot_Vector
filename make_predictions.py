@@ -20,18 +20,7 @@ from datetime import datetime, timedelta
 token = os.getenv('TOKEN') or 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlNWZkNGRkYWZmZmIyMDk2YTAyMWYzNjZiY2YxYjYwYSIsInBlcm1pc3Npb25zIjpbXSwiYWNjZXNzUnVsZXMiOlt7ImlkIjoidHJhZGluZy1hY2NvdW50LW1hbmFnZW1lbnQtYXBpIiwibWV0aG9kcyI6WyJ0cmFkaW5nLWFjY291bnQtbWFuYWdlbWVudC1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1yZXN0LWFwaSIsIm1ldGhvZHMiOlsibWV0YWFwaS1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1ycGMtYXBpIiwibWV0aG9kcyI6WyJtZXRhYXBpLWFwaTp3czpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciIsIndyaXRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoibWV0YWFwaS1yZWFsLXRpbWUtc3RyZWFtaW5nLWFwaSIsIm1ldGhvZHMiOlsibWV0YWFwaS1hcGk6d3M6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6Im1ldGFzdGF0cy1hcGkiLCJtZXRob2RzIjpbIm1ldGFzdGF0cy1hcGk6cmVzdDpwdWJsaWM6KjoqIl0sInJvbGVzIjpbInJlYWRlciJdLCJyZXNvdXJjZXMiOlsiKjokVVNFUl9JRCQ6KiJdfSx7ImlkIjoicmlzay1tYW5hZ2VtZW50LWFwaSIsIm1ldGhvZHMiOlsicmlzay1tYW5hZ2VtZW50LWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJjb3B5ZmFjdG9yeS1hcGkiLCJtZXRob2RzIjpbImNvcHlmYWN0b3J5LWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIiwid3JpdGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19LHsiaWQiOiJtdC1tYW5hZ2VyLWFwaSIsIm1ldGhvZHMiOlsibXQtbWFuYWdlci1hcGk6cmVzdDpkZWFsaW5nOio6KiIsIm10LW1hbmFnZXItYXBpOnJlc3Q6cHVibGljOio6KiJdLCJyb2xlcyI6WyJyZWFkZXIiLCJ3cml0ZXIiXSwicmVzb3VyY2VzIjpbIio6JFVTRVJfSUQkOioiXX0seyJpZCI6ImJpbGxpbmctYXBpIiwibWV0aG9kcyI6WyJiaWxsaW5nLWFwaTpyZXN0OnB1YmxpYzoqOioiXSwicm9sZXMiOlsicmVhZGVyIl0sInJlc291cmNlcyI6WyIqOiRVU0VSX0lEJDoqIl19XSwidG9rZW5JZCI6IjIwMjEwMjEzIiwiaW1wZXJzb25hdGVkIjpmYWxzZSwicmVhbFVzZXJJZCI6ImU1ZmQ0ZGRhZmZmYjIwOTZhMDIxZjM2NmJjZjFiNjBhIiwiaWF0IjoxNzE4NjAwMTc5fQ.P_Q7S9gllY-A0ygrF72pmpyUrno0VZ6_gBXIT31fLOwKFcEEeqopfcEH7yUL6upwTe69YAitfuy3OcDfjBNL7D7Vnuh1FUUUb2EbuGEnBi-B3GSazhZ83uSeAa89zutuNsr7DrptYf-ZHIUw10NSbIHZjhTKOsT9GoV-lv6QLsaxe87wJ8hbv5ajWvo2VKYhJKv0fQFDP2SwsboGnjC4ioqMGoGFhAv2BNLs3nXZL8SWe0tEYIcLmfWB1sWTlPDrsnaOzRdyOzUwbRljoJzns1BUyHW375eQTR93oNjN_P1zJNL9J_V8rqc-nIJcQPhIFytwaFDy-Z3DJHZQJk6mAbDLkphjQAvGeXrwjjk_uQNuY0WzmJmv21dFeQ3aFJhW-wH7l_KYEYjwqxP_H2lU0_AXpiGxn0ZWOoRbyp2Uer8X2hBg_psUd7RlhmfVqXQqTkJLpFpZrP980rq1S_deFWWiZPihXqkzTsFwUTl2DWMyuTxwsQnCBi-Dbt11XY-1kXe7uABqL9L6YbaclohAUVQF1pIVONbELTkTzUqfzqf30TLsxT67xScvd51-smHTDBYyvSDjzWLQ-HCl9gMJlZ43NcJtA9fckE47yf7O5YaaaA3QXhNSO86jiDvJ_spVijZXi62P_d4d71fCpUZTum1WSwRAiF5scvIjwFMSL98'
 accountId = os.getenv('ACCOUNT_ID') or '7416410e-1803-4778-bead-73b66d695bb5'
 #symbol_list =['EURUSDm', 'GBPUSDm','AUDCHFm', 'NZDUSDm','GBPTRYm','XAUUSDm','XAGUSDm',]
-symbol_list =['BTCUSDm','EURUSDm', 'GBPUSDm','AUDCHFm', 'NZDUSDm','GBPTRYm','XAUUSDm','XAGUSDm',
-    'USDCHFm',  # US Dollar/Swiss Franc (Major)
-    'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    'EURGBPm',  # Euro/British Pound (Minor)
-    'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    'EURCHFm',  # Euro/Swiss Franc (Minor)
-    'EURAUDm',  # Euro/Australian Dollar (Minor)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    ]
-"""
+
 symbol_list = [
     'EURUSDm',  # Euro/US Dollar (Major)
     'GBPUSDm',  # British Pound/US Dollar (Major)
@@ -42,21 +31,23 @@ symbol_list = [
     'XAGUSDm',  # Silver/US Dollar (Commodity)
     'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    'EURGBPm',  # Euro/British Pound (Minor)
+    #'EURGBPm',  # Euro/British Pound (Minor)
     'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    'EURCHFm',  # Euro/Swiss Franc (Minor)
+    #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
+    #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
+    ##'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
     'EURCADm',  # Euro/Canadian Dollar (Minor)
     'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
     'BTCUSDm'
 
 ]
+
 """
 
+"""
 timeframe='15m'
-pages=15
+pages=7
 n_estimators=1
 min_samples_leaf=1
 max_depth=50
@@ -168,6 +159,19 @@ def decimal_places(number):
         # If there is no decimal point, return 0
         return 0
 
+
+# Function to add nested dictionary content to a .docx file
+def add_nested_dict_to_docx(info_dict, filename=f'output{pages}{timeframe}.docx'):
+    doc = Document()
+    doc.add_heading('AI analysis and market forecast For timeframe', 0)
+    for symbol, details in info_dict.items():
+        doc.add_heading(symbol, level=1)
+        for key, value in details.items():
+            doc.add_paragraph(f"{key}: {value}", style='List Number')
+    doc.save(filename)
+    print(f"Information added to {filename} successfully.")
+
+
 def add_stop_losse(df):
     pass
     # Initialize new columns
@@ -205,11 +209,35 @@ def add_stop_losse(df):
     df['buy_low']= df['buy_low'].fillna(1)
     df['sell_low']= df['sell_low'].fillna(1)
     df['buy_high']= df['buy_high'].fillna(1)
-
+    df['return'] = df['close'].pct_change()
+    df['volatility'] = df['return'].rolling(window=10).std()
+    df['moving_avg'] = df['close'].rolling(window=10).mean()
     # Drop the individual Sell_High and Buy_Low columns
     #df.drop(columns=['sell_high', 'buy_low',], inplace=True)
     return df
-
+# Function to add data to the dictionary
+def add_symbol_data(symbol, r2_2, mse_2, r2_2_1, mse_2_1, r2_2_2, mse_2_2, next_close, next_low, next_high, actual_close, actual_low, actual_high, diff2, diff1):
+    if symbol not in data:
+        data[symbol] = {}
+    
+    data[symbol] = {
+        'r2_2': r2_2,
+        'mse_2': mse_2,
+        'r2_2_1': r2_2_1,
+        'mse_2_1': mse_2_1,
+        'r2_2_2': r2_2_2,
+        'mse_2_2': mse_2_2,
+        'next_close': next_close,
+        'next_low': next_low,
+        'next_high': next_high,
+        'actual': {
+            'close': actual_close,
+            'low': actual_low,
+            'high': actual_high
+        },
+        'diff2': diff2,
+        'diff1': diff1
+    }
 
 def prepare(df):
     df=add_stop_losse(df)
@@ -246,16 +274,34 @@ def prepare(df):
     df_new = df_new.loc[:, ~inf_mask.any()]
 
     # Set a threshold for numerical columns
-    threshold = 1e30  # Adjust the threshold as needed
+    threshold = 1e40  # Adjust the threshold as needed
 
     # Filter columns where all values are greater than the threshold
     columns_to_drop = df_new.select_dtypes(include=np.number).columns[(df_new.select_dtypes(include=np.number) > threshold).all()]
     #df_new['time']=time
     #print(columns_to_drop)
     #print(df_new.drop(columns=['Prediction']))
-    #df_new.drop(columns=columns_to_drop)
+    df_new.drop(columns=columns_to_drop)
     return df_new
+# Define a threshold value
+threshold = 1e-40
+
+# Define a function to replace values below the threshold and handle infinity
+def replace_values(x):
+    if isinstance(x, (int, float)):
+        if x <= threshold:
+            return threshold
+        elif x == np.inf:
+            return np.finfo(np.float64).max
+        elif x == -np.inf:
+            return -np.finfo(np.float64).max
+    return x
+
+# Apply the function only to columns of type int or float
+
+
 async def main2(timeframe,pages):
+    
     print('Up and runing')
     api = MetaApi(token)
     account = await api.metatrader_account_api.get_account(accountId)
@@ -275,6 +321,7 @@ async def main2(timeframe,pages):
     # Wait until terminal state synchronized to the local state
     print('Waiting for SDK to synchronize to terminal state (may take some time depending on your history size)')
     await connection.wait_synchronized()
+    
     for symbol in symbol_list:
         print(symbol)
         trades =await connection.get_positions()#connection.get_orders()
@@ -285,7 +332,8 @@ async def main2(timeframe,pages):
             try:
                 try:
                     # Fetch historical price data
-                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=60)
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=300)
+
                     print('Fetched the latest candle data successfully')
                 except Exception as e:
                     raise e
@@ -302,9 +350,11 @@ async def main2(timeframe,pages):
                     #print(df)
                     df_new=prepare(df)
                     #print(df_new[['Prediction','trade_max','stop_losses','stop_losses_predictions']])
+                    df_new = df_new.apply(lambda col: col.map(replace_values) if col.dtype in [np.int64, np.float64] else col)
 
+                    
                     X =df_new
-
+                    print(len(X.columns))
                     #print(X.columns)
                     column_list=[]
                     for column in X.columns:
@@ -325,15 +375,30 @@ async def main2(timeframe,pages):
                     )
                     X = transformer.fit_transform(X)
                     last_row = np.array(X[-1]).reshape(1, -1)
+                    #print(len(last_row.columns))
 
-                    model_close_15m, sklearn_version = joblib.load(f'Regressors/Close/model{symbol}{timeframe}close.pkl')
-                    model_low_15m,_ = joblib.load(f'Regressors/Low/model{symbol}{timeframe}low.pkl')
-                    model_high_15m,_ = joblib.load(f'Regressors/High/model{symbol}{timeframe}high.pkl')
+                    model_close, sklearn_version = joblib.load(f'Regressors/Close/model{symbol}{timeframe}close.pkl')
+                    model_low,_ = joblib.load(f'Regressors/Low/model{symbol}{timeframe}low.pkl')
+                    model_high,_ = joblib.load(f'Regressors/High/model{symbol}{timeframe}high.pkl')
 
 
-                    classifiers_15m, sklearn_version = joblib.load(f'Classifiers/15m/ExtraTrees{symbol}.pkl')
+                    classifiers_15m, _= joblib.load(f'Classifiers/15m/ExtraTrees{symbol}.pkl')
                     classifiers_30m,_ = joblib.load(f'Classifiers/30m/ExtraTrees{symbol}.pkl')
+                    """
+                    trained_feature_names = model_close.feature_names_in_
 
+                    # Get the feature names from the prediction data
+                    prediction_feature_names = last_row.columns
+
+                    # Identify extra features
+                    extra_features = set(prediction_feature_names) - set(trained_feature_names)
+
+                    # Drop extra features from the prediction data
+                    last_row = last_row.drop(columns=extra_features)
+                    
+                    # Now you can safely use the cleaned prediction data
+                    next_close = model_close.predict(prediction_data_cleaned)
+                    """
 
                     next_close = model_close.predict(last_row)
                     next_low = model_low.predict(last_row)
@@ -383,9 +448,8 @@ async def main2(timeframe,pages):
                                 except Exception as err:
                                     print('Trade failed with error:')
                                     print(api.format_error(err))
-                        
                         elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.8) and (classifiers_30m_pred_proba>0.8):
-                            elif (next_close<previous_close and 
+                            if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
                                 stop_loss=(next_high+lag_size*2)
@@ -400,7 +464,7 @@ async def main2(timeframe,pages):
                                     )
                                     print(f'Sell Signal (T)   :Sell Trade successful For Symbol :{symbol}')
                                     Trader_success=True
-                
+
                                 except Exception as err:
                                     #raise err
                                     print('Trade failed with error:')
