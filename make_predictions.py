@@ -432,7 +432,7 @@ async def main2(timeframe,pages):
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
-                                stop_loss=next_low-(lag_size*2)
+                                stop_loss=next_low-(lag_size*4)
                                 #take_profit=trademax-(lag_size/2)
                                 try:
                                     
@@ -452,7 +452,7 @@ async def main2(timeframe,pages):
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
-                                stop_loss=(next_high+lag_size*2)
+                                stop_loss=(next_high+lag_size*4)
                                 #take_profit=trademax+(lag_size/2)
                                 try:
                                     
