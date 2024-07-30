@@ -362,7 +362,7 @@ async def main2(timeframe,pages):
             try:
                 try:
                     # Fetch historical price data
-                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=300)
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=500)
 
                     print('Fetched the latest candle data successfully')
                 except Exception as e:
@@ -435,7 +435,7 @@ async def main2(timeframe,pages):
                     next_high = model_high.predict(last_row)
 
                     classifiers_15m_pred=classifiers_15m.predict(last_row)[0]
-                    candles = await account.get_historical_candles(symbol=symbol, timeframe='30m', start_time=None, limit=300)
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe='30m', start_time=None, limit=500)
                     last_row_30m=prepare_30m(candles)
                     classifiers_30m_pred=classifiers_30m.predict(last_row_30m)[0]
                     """
@@ -517,7 +517,7 @@ async def main2(timeframe,pages):
                     
             except Exception as e:
                 #print(f'{symbol} failed')
-                #raise e
+                raise e
                 pass
 def main():
     asyncio.run(main2(timeframe,pages))
