@@ -406,6 +406,7 @@ async def main2(timeframe,pages):
 
                     classifiers_15m_pred=classifiers_15m.predict(last_row)[0]
                     classifiers_30m_pred=classifiers_30m.predict(last_row)[0]
+                    """
                     if classifiers_15m_pred==0:
                         classifiers_15m_pred_proba=classifiers_15m.predict_proba(last_row)[0][0]
                     else:
@@ -414,6 +415,11 @@ async def main2(timeframe,pages):
                         classifiers_30m_pred_proba=classifiers_30m.predict_proba(last_row)[0][0]
                     else:
                         classifiers_30m_pred_proba=classifiers_30m.predict_proba(last_row)[0][1]
+                    """
+                    # Get predicted probabilities for both classifiers
+                    classifiers_15m_pred_proba = classifiers_15m.predict_proba(last_row)[0][classifiers_15m_pred]
+                    classifiers_30m_pred_proba = classifiers_30m.predict_proba(last_row)[0][classifiers_30m_pred]
+
                     next_close=round(next_close[0],decimal_places(df['close'].iloc[-1]))
                     next_low=round(next_low[0],decimal_places(df['close'].iloc[-1]))
                     next_high=round(next_high[0],decimal_places(df['close'].iloc[-1]))
@@ -428,11 +434,11 @@ async def main2(timeframe,pages):
                     
 
                     if (classifiers_15m_pred==classifiers_30m_pred):
-                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.8) and (classifiers_30m_pred_proba>0.8):
+                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9):
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
-                                stop_loss=next_low-(lag_size*4)
+                                stop_loss=None#next_low-(lag_size*4)
                                 #take_profit=trademax-(lag_size/2)
                                 try:
                                     
@@ -448,11 +454,11 @@ async def main2(timeframe,pages):
                                 except Exception as err:
                                     print('Trade failed with error:')
                                     print(api.format_error(err))
-                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.8) and (classifiers_30m_pred_proba>0.8):
+                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9):
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
-                                stop_loss=(next_high+lag_size*4)
+                                stop_loss=None#(next_high+lag_size*4)
                                 #take_profit=trademax+(lag_size/2)
                                 try:
                                     
