@@ -298,7 +298,37 @@ def replace_values(x):
     return x
 
 # Apply the function only to columns of type int or float
+def prepare_30m():
+    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=300)
+    df=pd.DataFrame(candles)
+    df_new=prepare(df)
+    #print(df_new[['Prediction','trade_max','stop_losses','stop_losses_predictions']])
+    df_new = df_new.apply(lambda col: col.map(replace_values) if col.dtype in [np.int64, np.float64] else col)
 
+    
+    X =df_new
+    print(len(X.columns))
+    #print(X.columns)
+    column_list=[]
+    for column in X.columns:
+        try:
+            if str(column[:6])=='binned':
+                column_list.append(column)
+        except Exception as e:
+            pass
+    for i in ['type']:
+        column_list.append(i)
+
+    
+    #print(last_row)
+    # One-hot encode the 'binned_column1' feature
+    transformer = ColumnTransformer(
+        transformers=[('cat', OneHotEncoder(), column_list)],
+        remainder='passthrough'
+    )
+    X = transformer.fit_transform(X)
+    last_row = np.array(X[-1]).reshape(1, -1)
+    return last_row
 
 async def main2(timeframe,pages):
     
@@ -405,7 +435,8 @@ async def main2(timeframe,pages):
                     next_high = model_high.predict(last_row)
 
                     classifiers_15m_pred=classifiers_15m.predict(last_row)[0]
-                    classifiers_30m_pred=classifiers_30m.predict(last_row)[0]
+                    last_row_30m=prepare_30m()
+                    classifiers_30m_pred=classifiers_30m.predict(last_row_30m)[0]
                     """
                     if classifiers_15m_pred==0:
                         classifiers_15m_pred_proba=classifiers_15m.predict_proba(last_row)[0][0]
@@ -418,7 +449,7 @@ async def main2(timeframe,pages):
                     """
                     # Get predicted probabilities for both classifiers
                     classifiers_15m_pred_proba = classifiers_15m.predict_proba(last_row)[0][classifiers_15m_pred]
-                    classifiers_30m_pred_proba = classifiers_30m.predict_proba(last_row)[0][classifiers_30m_pred]
+                    classifiers_30m_pred_proba = classifiers_30m.predict_proba(last_row_30m)[0][classifiers_30m_pred]
 
                     next_close=round(next_close[0],decimal_places(df['close'].iloc[-1]))
                     next_low=round(next_low[0],decimal_places(df['close'].iloc[-1]))
