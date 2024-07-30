@@ -298,8 +298,8 @@ def replace_values(x):
     return x
 
 # Apply the function only to columns of type int or float
-def prepare_30m():
-    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=300)
+def prepare_30m(candles):
+    
     df=pd.DataFrame(candles)
     df_new=prepare(df)
     #print(df_new[['Prediction','trade_max','stop_losses','stop_losses_predictions']])
@@ -435,7 +435,8 @@ async def main2(timeframe,pages):
                     next_high = model_high.predict(last_row)
 
                     classifiers_15m_pred=classifiers_15m.predict(last_row)[0]
-                    last_row_30m=prepare_30m()
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=300)
+                    last_row_30m=prepare_30m(candles)
                     classifiers_30m_pred=classifiers_30m.predict(last_row_30m)[0]
                     """
                     if classifiers_15m_pred==0:
