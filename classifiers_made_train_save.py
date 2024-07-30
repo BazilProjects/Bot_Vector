@@ -49,7 +49,7 @@ symbol_list = [
     'BTCUSDm'
 
 ]
-timeframe='30m'
+timeframe='15m'
 pages=7
 n_estimators=7
 min_samples_leaf=1
@@ -322,7 +322,7 @@ async def main2(timeframe,pages):
     for symbol in symbol_list:
         try:
 
-            df=pd.read_csv(f'../CANDLES/{symbol}{timeframe}{str(pages)}.csv')
+            df=pd.read_csv(f'COLLECT CANDLES/{timeframe}/{symbol}{timeframe}{str(pages)}.csv')
 
             if not df.empty:
                 df_new=prepare(df)

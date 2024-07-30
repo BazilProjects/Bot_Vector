@@ -355,14 +355,14 @@ async def main2(timeframe,pages):
     for symbol in symbol_list:
         print(symbol)
         trades =await connection.get_positions()#connection.get_orders()
-        if len(trades)>=10:
-            pass
+        if len(trades)>=20:
+            print(f'There are more than 10 runing trades, Total is :{len(trades)}')
 
         else:
             try:
                 try:
                     # Fetch historical price data
-                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=500)
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe=timeframe, start_time=None, limit=400)
 
                     print('Fetched the latest candle data successfully')
                 except Exception as e:
@@ -435,7 +435,7 @@ async def main2(timeframe,pages):
                     next_high = model_high.predict(last_row)
 
                     classifiers_15m_pred=classifiers_15m.predict(last_row)[0]
-                    candles = await account.get_historical_candles(symbol=symbol, timeframe='30m', start_time=None, limit=500)
+                    candles = await account.get_historical_candles(symbol=symbol, timeframe='30m', start_time=None, limit=400)
                     last_row_30m=prepare_30m(candles)
                     classifiers_30m_pred=classifiers_30m.predict(last_row_30m)[0]
                     """

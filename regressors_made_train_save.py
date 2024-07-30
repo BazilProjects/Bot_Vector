@@ -35,17 +35,18 @@ symbol_list = [
     'XAGUSDm',  # Silver/US Dollar (Commodity)
     'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    'EURGBPm',  # Euro/British Pound (Minor)
+    #'EURGBPm',  # Euro/British Pound (Minor)
     'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    'EURCHFm',  # Euro/Swiss Franc (Minor)
+    #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
+    #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
+    ##'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
     'EURCADm',  # Euro/Canadian Dollar (Minor)
     'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
     'BTCUSDm'
 
 ]
+
 data = {}
 timeframe='15m'
 pages=7
@@ -292,7 +293,7 @@ async def main2(timeframe,pages):
         try:
 
             
-            df=pd.read_csv(f'../CANDLES/{symbol}{timeframe}{str(pages)}.csv')
+            df=pd.read_csv(f'COLLECT CANDLES/{timeframe}/{symbol}{timeframe}{str(pages)}.csv')
             actual=df.tail(1)
             df=df.head(6999)
             

@@ -204,7 +204,7 @@ async def get_candles_m(timeframe,symbol,pages):
                     new_df = pd.DataFrame(candles)
                     df = pd.concat([df, new_df], ignore_index=True)
                     print(f'Candles added to dataframe')
-                df.to_csv(f'{symbol}{timeframe}{str(pages)}.csv', index=False)
+                df.to_csv(f'{timeframe}/{symbol}{timeframe}{str(pages)}.csv', index=False)
             except:
                 pass
 
