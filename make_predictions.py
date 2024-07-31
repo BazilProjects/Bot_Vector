@@ -29,15 +29,15 @@ symbol_list = [
     'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
     'XAUUSDm',  # Gold/US Dollar (Commodity)
     'XAGUSDm',  # Silver/US Dollar (Commodity)
-    'USDCHFm',  # US Dollar/Swiss Franc (Major)
+    #'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
     #'EURGBPm',  # Euro/British Pound (Minor)
     #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
     #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
     #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
     ##'EURCHFm',  # Euro/Swiss Franc (Minor)
-    'EURAUDm',  # Euro/Australian Dollar (Minor)
-    'EURCADm',  # Euro/Canadian Dollar (Minor)
+    #'EURAUDm',  # Euro/Australian Dollar (Minor)
+    #'EURCADm',  # Euro/Canadian Dollar (Minor)
     'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
     'BTCUSDm'
 
