@@ -21,148 +21,31 @@ token = os.getenv('TOKEN') or 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJl
 accountId = os.getenv('ACCOUNT_ID') or '653d65c4-a70f-49ac-a6de-deea63238808'
 
 symbol_list = [
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
+    'BTCUSDm',
     'EURUSDm',  # Euro/US Dollar (Major)
     'GBPUSDm',  # British Pound/US Dollar (Major)
-    'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
+    #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
     'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
     'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
-    'XAUUSDm',  # Gold/US Dollar (Commodity)
     'XAGUSDm',  # Silver/US Dollar (Commodity)
     'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
     #'EURGBPm',  # Euro/British Pound (Minor)
-    'GBPCHFm',  # British Pound/Swiss Franc (Minor)
+    #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
     #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
     #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
     ##'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
     'EURCADm',  # Euro/Canadian Dollar (Minor)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    'BTCUSDm'
+    
+    
 
 ]
-timeframe='30m'
+
+#timeframe='30m'
 pages=7
-n_estimators=100
-min_samples_leaf=1
-max_depth=50
-def generate_new_features(df,column1,column2):
-    # Check if required columns are present
-    required_columns = [str(column1),str(column2)]#[f'{column1}', f'{column2}']
-    for col in required_columns:
-        if col not in df.columns:
-            raise ValueError(f"DataFrame must contain '{col}' column.")
-
-    # Addition/Subtraction
-    df[f'{column1}_plus_{column2}'] = df[column1] + df[column2]
-    df[f'{column1}_minus_{column2}'] = df[column1] - df[column2]
-
-    # Multiplication/Division
-    df[f'{column1}_times_{column2}'] = df[column1] * df[column2]
-    df[f'{column1}_div_{column2}'] = df[column1] / df[column2]
-
-    # Mean and Standard Deviation
-    df[f'mean_column_{column1}{column2}'] = df[[column1, column2]].mean(axis=1)
-    df[f'std_column_{column1}{column2}'] = df[[column1, column2]].std(axis=1)
-
-    # Sum
-    df[f'sum_column_{column1}{column2}'] = df[[column1, column2]].sum(axis=1)
-
-    # Logarithm and Exponential
-    df[f'log_column1_{column1}{column2}'] = np.log(df[column1])
-    df[f'exp_column1_{column1}{column2}'] = np.exp(df[column1])
-
-    # Square Root
-    df[f'sqrt_column1_{column1}{column2}'] = np.sqrt(df[column1])
-
-    # Rolling Mean and Cumulative Sum
-    df[f'rolling_mean_column1_{column1}{column2}'] = df[column1].rolling(window=3).mean()
-    df[f'cumulative_sum_column1_{column1}{column2}'] = df[column1].cumsum()
-
-    # Polynomial Features
-    poly = PolynomialFeatures(degree=2)
-    poly_features = poly.fit_transform(df[[column1, column2]])
-    df[f'poly_column1_2_{column1}{column2}'] = poly_features[:, 2]  # x1 * x2 term
-    df[f'poly_column1_2_squared_{column1}{column2}'] = poly_features[:, 3]  # x1^2 term
-    df[f'poly_column2_squared_{column1}{column2}'] = poly_features[:, 4]  # x2^2 term
-
-    # Interaction Term
-    df[f'interaction_{column1}{column2}'] = df[column1] * df[column2]
-    #if ('close' in [column1,column2]) and ('open' in [column1,column2]):
-    # Binning
-    df[f'binned_column_{column1}{column2}'] = pd.cut(df[column1], bins=3, labels=['low', 'medium', 'high'])
-    #df[f'binned_column_2_{column1}{column2}'] = pd.cut(df[column2], bins=3, labels=['low', 'medium', 'high'])
-
-    # Lagged Features
-    df[f'lagged_column1_{column1}{column2}'] = df[column1].shift(1)
-    #df[f'lagged_column2_{column1}{column2}'] = df[column1].shift(2)
-    #df[f'lagged_column3_{column1}{column2}'] = df[column1].shift(3)
-
-    # Custom Function Example
-    df[f'custom_column1_{column1}{column2}'] = df[column1].apply(lambda x: x * 2)
-    #df[f'custom_column2_{column1}{column2}'] = df[column2].apply(lambda x: x * 2)
-
-    return df
-
-def decimal_places(number):
-    # Convert the number to a string
-    num_str = str(number)
-    
-    # Check if there is a decimal point
-    if '.' in num_str:
-        # Find the index of the decimal point
-        decimal_index = num_str.index('.')
-        
-        # Count the characters after the decimal point
-        num_decimal_places = len(num_str) - decimal_index - 1
-        
-        return num_decimal_places
-    else:
-        # If there is no decimal point, return 0
-        return 0
-
-def add_stop_losse(df):
-    pass
-    # Initialize new columns
-    df['type'] = None
-    df['sell_high'] = None
-    df['buy_low'] = None
-
-    # Determine the candle type dynamically
-    for i in range(1, len(df)):
-        if df.at[i, 'close'] > df.at[i-1, 'close']:
-            df.at[i, 'type'] = 'buy'
-        else:
-            df.at[i, 'type'] = 'sell'
-
-    # Set the first candle type as 'buy' or 'sell' as needed
-    df.at[0, 'type'] = 'buy' if df.at[0, 'close'] > df.at[0, 'open'] else 'sell'
-
-
-    # Loop through the DataFrame to fill Sell_High and Buy_Low
-    for index, row in df.iterrows():
-        if row['type'] == 'sell':
-            df.at[index, 'sell_high'] = row['high']
-        elif row['type'] == 'buy':
-            df.at[index, 'buy_low'] = row['low']
-    # Loop through the DataFrame to fill Sell_High and Buy_Low
-    for index, row in df.iterrows():
-        if row['type'] == 'sell':
-            df.at[index, 'sell_low'] = row['low']
-        elif row['type'] == 'buy':
-            df.at[index, 'buy_high'] = row['high']
-    # Combine Sell_High and Buy_Low into one column
-    df['stop_losses'] = df['sell_high'].combine_first(df['buy_low'])
-    df['trade_max'] = df['sell_low'].combine_first(df['buy_high'])
-    df['sell_high']= df['sell_high'].fillna(1)
-    df['buy_low']= df['buy_low'].fillna(1)
-    df['sell_low']= df['sell_low'].fillna(1)
-    df['buy_high']= df['buy_high'].fillna(1)
-
-    # Drop the individual Sell_High and Buy_Low columns
-    #df.drop(columns=['sell_high', 'buy_low',], inplace=True)
-    return df
-
 
    
 async def get_candles_m(timeframe,symbol,pages):
@@ -213,15 +96,15 @@ async def get_candles_m(timeframe,symbol,pages):
     except Exception as e:
         raise e
         
-async def main2(timeframe,pages):
+async def main2():
+    for timeframe in ['15m','30m']:
+        for symbol in symbol_list:
+            try:
 
-    for symbol in symbol_list:
-        try:
+                df=await get_candles_m(timeframe,symbol,pages)
 
-            df=await get_candles_m(timeframe,symbol,pages)
-
-        except Exception as e:
-            #print(f'{symbol} failed')
-            raise e
-            pass
-asyncio.run(main2(timeframe,pages))
+            except Exception as e:
+                #print(f'{symbol} failed')
+                raise e
+                pass
+asyncio.run(main2())

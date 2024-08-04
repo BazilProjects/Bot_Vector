@@ -29,27 +29,29 @@ accountId = os.getenv('ACCOUNT_ID') or '7416410e-1803-4778-bead-73b66d695bb5'
 #symbol_list =['NZDUSDm','GBPTRYm','XAUUSDm','XAGUSDm',]
 
 symbol_list = [
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
+    'BTCUSDm',
     'EURUSDm',  # Euro/US Dollar (Major)
     'GBPUSDm',  # British Pound/US Dollar (Major)
-    'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
-    'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
-    'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
-    'XAUUSDm',  # Gold/US Dollar (Commodity)
     'XAGUSDm',  # Silver/US Dollar (Commodity)
+    #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
+    #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
+    'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
     'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    'EURGBPm',  # Euro/British Pound (Minor)
-    'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    'EURCHFm',  # Euro/Swiss Franc (Minor)
+    #'EURGBPm',  # Euro/British Pound (Minor)
+    #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
+    #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
+    #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
+    ##'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
-    'EURCADm',  # Euro/Canadian Dollar (Minor)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    'BTCUSDm'
+    #'EURCADm',  # Euro/Canadian Dollar (Minor)
+    
+    
 
 ]
-timeframe='15m'
+timeframe='30m'
 pages=7
 n_estimators=7
 min_samples_leaf=1
@@ -391,7 +393,7 @@ async def main2(timeframe,pages):
 
 
 
-                X_train, X_test, y_train, y_test = train_test_split(X, y_close, test_size=0.2, random_state=42, shuffle=False)
+                X_train, X_test, y_train, y_test = train_test_split(X, y_close, test_size=0.01, random_state=42, shuffle=False)
                 
                 
                 

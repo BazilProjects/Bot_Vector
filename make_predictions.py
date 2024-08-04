@@ -22,30 +22,33 @@ accountId = os.getenv('ACCOUNT_ID') or '7416410e-1803-4778-bead-73b66d695bb5'
 #symbol_list =['EURUSDm', 'GBPUSDm','AUDCHFm', 'NZDUSDm','GBPTRYm','XAUUSDm','XAGUSDm',]
 
 symbol_list = [
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
+    'BTCUSDm',
     'EURUSDm',  # Euro/US Dollar (Major)
     'GBPUSDm',  # British Pound/US Dollar (Major)
-    'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
-    'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
-    'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
-    'XAUUSDm',  # Gold/US Dollar (Commodity)
     'XAGUSDm',  # Silver/US Dollar (Commodity)
+    #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
+    #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
+    'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
     'USDCHFm',  # US Dollar/Swiss Franc (Major)
     'AUDUSDm',  # Australian Dollar/US Dollar (Major)
     #'EURGBPm',  # Euro/British Pound (Minor)
-    'GBPCHFm',  # British Pound/Swiss Franc (Minor)
+    #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
     #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
     #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
     ##'EURCHFm',  # Euro/Swiss Franc (Minor)
     'EURAUDm',  # Euro/Australian Dollar (Minor)
-    'EURCADm',  # Euro/Canadian Dollar (Minor)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    'BTCUSDm'
+    #'EURCADm',  # Euro/Canadian Dollar (Minor)
+    
+    
 
 ]
 
 """
 
 """
+price_top_gap=5
 timeframe='15m'
 pages=7
 n_estimators=1
@@ -414,21 +417,6 @@ async def main2(timeframe,pages):
 
                     classifiers_15m, _= joblib.load(f'Classifiers/15m/ExtraTrees{symbol}.pkl')
                     classifiers_30m,_ = joblib.load(f'Classifiers/30m/ExtraTrees{symbol}.pkl')
-                    """
-                    trained_feature_names = model_close.feature_names_in_
-
-                    # Get the feature names from the prediction data
-                    prediction_feature_names = last_row.columns
-
-                    # Identify extra features
-                    extra_features = set(prediction_feature_names) - set(trained_feature_names)
-
-                    # Drop extra features from the prediction data
-                    last_row = last_row.drop(columns=extra_features)
-                    
-                    # Now you can safely use the cleaned prediction data
-                    next_close = model_close.predict(prediction_data_cleaned)
-                    """
 
                     next_close = model_close.predict(last_row)
                     next_low = model_low.predict(last_row)
@@ -438,16 +426,7 @@ async def main2(timeframe,pages):
                     candles = await account.get_historical_candles(symbol=symbol, timeframe='30m', start_time=None, limit=400)
                     last_row_30m=prepare_30m(candles)
                     classifiers_30m_pred=classifiers_30m.predict(last_row_30m)[0]
-                    """
-                    if classifiers_15m_pred==0:
-                        classifiers_15m_pred_proba=classifiers_15m.predict_proba(last_row)[0][0]
-                    else:
-                        classifiers_15m_pred_proba=classifiers_15m.predict_proba(last_row)[0][1]
-                    if classifiers_30m_pred==0:
-                        classifiers_30m_pred_proba=classifiers_30m.predict_proba(last_row)[0][0]
-                    else:
-                        classifiers_30m_pred_proba=classifiers_30m.predict_proba(last_row)[0][1]
-                    """
+
                     # Get predicted probabilities for both classifiers
                     classifiers_15m_pred_proba = classifiers_15m.predict_proba(last_row)[0][classifiers_15m_pred]
                     classifiers_30m_pred_proba = classifiers_30m.predict_proba(last_row_30m)[0][classifiers_30m_pred]
@@ -462,7 +441,23 @@ async def main2(timeframe,pages):
                     print(f"Next predicted high price: {next_high}")
 
                     previous_close= df_new['close'].iloc[-1]
-                    lag_size=0.0004
+                    symbol_list_lag= [
+                        {'BTCUSDm': 100},
+                        {'GBPUSDm': 0.00048},
+                        {'EURUSDm': 0.00044},
+                        {'AUDUSDm': 0.00048},
+                        {'XAUUSDm':1},
+                        {'GBPAUDm':0.00181},
+                        {'XAGUSDm':0.209},
+                    ]
+
+                    for item in symbol_list_lag:
+                        if symbol in item:
+                            lag_size= item[symbol]
+                        else:
+                            lag_size=0.0004
+
+                    max_price_gap=(lag_size*price_top_gap)
                     
 
                     if (classifiers_15m_pred==classifiers_30m_pred):
@@ -470,6 +465,9 @@ async def main2(timeframe,pages):
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
+                                max_acceptable_price=previous_close+max_price_gap
+                                if next_close>max_acceptable_price:
+                                    next_close=max_acceptable_price
                                 stop_loss=None#next_low-(lag_size*4)
                                 #take_profit=trademax-(lag_size/2)
                                 try:
@@ -490,6 +488,9 @@ async def main2(timeframe,pages):
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
+                                max_acceptable_price=previous_close-max_price_gap
+                                if next_close<max_acceptable_price:
+                                    next_close=max_acceptable_price
                                 stop_loss=None#(next_high+lag_size*4)
                                 #take_profit=trademax+(lag_size/2)
                                 try:
@@ -519,5 +520,5 @@ async def main2(timeframe,pages):
                 #print(f'{symbol} failed')
                 raise e
                 pass
-def main():
-    asyncio.run(main2(timeframe,pages))
+#def main():
+asyncio.run(main2(timeframe,pages))
