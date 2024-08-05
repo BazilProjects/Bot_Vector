@@ -1,6 +1,11 @@
 import warnings
 warnings.filterwarnings("ignore")
+import sklearn
+from datetime import datetime, timedelta
+from textblob import TextBlob
+import yfinance as yf
 import pandas as pd
+import pandas_ta as ta
 import numpy as np
 from sklearn.model_selection import train_test_split, learning_curve
 from sklearn.linear_model import LinearRegression
@@ -53,6 +58,48 @@ pages=8
 n_estimators=1
 min_samples_leaf=1
 max_depth=50
+
+
+
+
+
+def cal_sentiment_textblob(symbol):
+    total_sentiment = 0
+    
+    try:
+        # Retrieve news headlines using yfinance
+        stock = yf.Ticker(symbol)
+        news_df = stock.news
+        news_df = pd.DataFrame(news_df)
+        #print(news_df)
+        # Sort news by publication time in descending order (handling potential exceptions)
+        try:
+            news_df = news_df.sort_values('providerPublishTime', ascending=False)
+        except KeyError:
+            news_df = news_df.sort_values('uuid', ascending=False)
+        
+        print(f"Sentiment analysis for symbol: {symbol}")
+        print("--------------------------------------")
+        #print(news_df)
+        # Perform sentiment analysis on the latest news headlines
+        for index, row in news_df.iterrows():
+            headline = row['title']
+            
+            # Perform sentiment analysis using TextBlob
+            blob = TextBlob(headline)
+            sentiment = blob.sentiment.polarity
+            total_sentiment += sentiment
+            
+            # Print each headline and its sentiment score
+            #print(headline)
+            #print(f"Sentiment Score: {sentiment}")
+        
+    except Exception as e:
+        #raise e
+        print(f"Error occurred: {str(e)}")
+        return total_sentiment
+    print(f'Total Sentiment Score: {total_sentiment}')
+    return total_sentiment
 def generate_new_features(df,column1,column2):
     # Check if required columns are present
     required_columns = [str(column1),str(column2)]#[f'{column1}', f'{column2}']
@@ -331,6 +378,48 @@ def prepare_30m(candles):
     X = transformer.fit_transform(X)
     last_row = np.array(X[-1]).reshape(1, -1)
     return last_row
+def calculate_rsi(data, period=14):
+    # Calculate price changes
+    delta = data['close'].diff()
+
+    # Separate gains and losses
+    gain = delta.where(delta > 0, 0)
+    loss = -delta.where(delta < 0, 0)
+
+    # Calculate average gains and losses using SMA
+    avg_gain = gain.rolling(window=period, min_periods=1).mean()
+    avg_loss = loss.rolling(window=period, min_periods=1).mean()
+
+    # Calculate Relative Strength (RS)
+    rs = avg_gain / avg_loss
+
+    # Calculate RSI
+    rsi = 100 - (100 / (1 + rs))
+
+    return rsi
+
+def get_trend_direction(df, ema_length=10, macd_fast=12, macd_slow=26, macd_signal=9):
+
+    # Calculate EMA
+    df['EMA'] = ta.ema(df['close'], length=ema_length)
+    
+    # Calculate MACD
+    macd = ta.macd(df['close'], fast=macd_fast, slow=macd_slow, signal=macd_signal)
+    df = pd.concat([df, macd], axis=1)
+    df=df.dropna()
+    # Ensure there are no NaN values in the MACD and EMA columns before checking the trend
+    if df[['EMA', 'MACD_12_26_9', 'MACDs_12_26_9']].isnull().values.any():
+        return "Not enough data to determine trend"
+    
+    # Determine the latest trend
+    latest_row = df.iloc[-1]
+    
+    if latest_row['close'] > latest_row['EMA'] and latest_row['MACD_12_26_9'] > latest_row['MACDs_12_26_9']:
+        return 1
+    elif latest_row['close'] < latest_row['EMA'] and latest_row['MACD_12_26_9'] < latest_row['MACDs_12_26_9']:
+        return -1
+    else:
+        return 0
 
 async def main2(timeframe,pages):
     
@@ -361,6 +450,8 @@ async def main2(timeframe,pages):
             print(f'There are more than 10 runing trades, Total is :{len(trades)}')
 
         else:
+            sentiment_results = float(cal_sentiment_textblob(symbol))
+            #if sentiment_results>0.25 or sentiment_results<0.25:
             try:
                 try:
                     # Fetch historical price data
@@ -386,7 +477,7 @@ async def main2(timeframe,pages):
 
                     
                     X =df_new
-                    print(len(X.columns))
+                    #print(len(X.columns))
                     #print(X.columns)
                     column_list=[]
                     for column in X.columns:
@@ -408,6 +499,9 @@ async def main2(timeframe,pages):
                     X = transformer.fit_transform(X)
                     last_row = np.array(X[-1]).reshape(1, -1)
                     #print(len(last_row.columns))
+
+                    # Calculate RSI and add it to the DataFrame
+                    df_new['rsi'] = calculate_rsi(df_new)
 
                     model_close, sklearn_version = joblib.load(f'Regressors/Close/model{symbol}{timeframe}close.pkl')
                     model_low,_ = joblib.load(f'Regressors/Low/model{symbol}{timeframe}low.pkl')
@@ -458,9 +552,9 @@ async def main2(timeframe,pages):
 
                     max_price_gap=(lag_size*price_top_gap)
                     
-
+                    trend_direction=get_trend_direction(df_new)
                     if (classifiers_15m_pred==classifiers_30m_pred):
-                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9):
+                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9) and ((df_new['rsi'].iloc[-1]<=30) or (trend_direction==1 and df_new['rsi'].iloc[-1]<55)):
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
@@ -483,7 +577,7 @@ async def main2(timeframe,pages):
                                 except Exception as err:
                                     print('Trade failed with error:')
                                     print(api.format_error(err))
-                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9):
+                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9)  and ((df_new['rsi'].iloc[-1]>=70) or (trend_direction==-1 and df_new['rsi'].iloc[-1]>55)):
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):

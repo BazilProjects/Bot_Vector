@@ -7,8 +7,8 @@ from sklearn.metrics import mean_squared_error
 
 # Configuration
 timeframe = '15m'
-symbol = 'EURUSDm'
-pages = 7
+symbol = 'XAUUSDm'
+pages = 8
 
 # Construct the file path
 file_path = f'COLLECT CANDLES/{timeframe}/{symbol}{timeframe}{str(pages)}.csv'
@@ -22,10 +22,6 @@ df = pd.read_csv(file_path)
 
 # Ensure time is in datetime format
 df['time'] = pd.to_datetime(df['time'])
-
-# Display the first few rows of the dataframe
-print(df.head())
-print(df.columns)
 
 # Check if the dataframe is empty
 if df.empty:
@@ -43,18 +39,17 @@ df['deviation'] = df['close'] - df['rolling_mean']
 df['Returns'] = df['close'].pct_change()
 
 # Calculate historical volatility (standard deviation of returns)
-volatility = df['Returns'].std() * np.sqrt(252)  # Annualized volatility
-print(f'Historical Volatility: {volatility}')
+df['volatility'] = df['Returns'].std() * np.sqrt(252)  # Annualized volatility
 
 # Drop NaN values
 df.dropna(inplace=True)
 
 # Prepare data for ExtraTrees model
 features = ['rolling_mean', 'rolling_std', 'upper_band', 'lower_band', 'deviation', 'Returns']
-target = 'Returns'
+#target =volatility #'Returns'
 
 # Shift the target to forecast the next period's returns
-df['Target'] = df['Returns'].shift(-1)
+df['Target'] =df['Returns'].shift(-1)
 
 # Drop the last row since it will have NaN in the target column after shifting
 df.dropna(inplace=True)
@@ -63,7 +58,7 @@ X = df[features]
 y = df['Target']
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42,shuffle=False)
 
 # Initialize and train the ExtraTrees model
 model = ExtraTreesRegressor(n_estimators=100, random_state=42)
@@ -75,6 +70,8 @@ y_pred = model.predict(X_test)
 # Evaluate the model
 mse = mean_squared_error(y_test, y_pred)
 print(f'Mean Squared Error: {mse}')
+from sklearn.metrics import  r2_score, mean_absolute_error, max_error
+r2 = r2_score(y_test, y_pred)
 
-# Display the first few rows of the updated dataframe
-print(df.head())
+#print(f'{name} Mean Squared Error: {mse}')
+print(f'R^2 Score: {r2}')
