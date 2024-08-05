@@ -47,7 +47,7 @@ symbol_list = [
 """
 
 """
-price_top_gap=7
+price_top_gap=5
 timeframe='15m'
 pages=8
 n_estimators=1
