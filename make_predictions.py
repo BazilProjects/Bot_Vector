@@ -31,7 +31,7 @@ symbol_list = [
     'BTCUSDm',
     #'EURUSDm',  # Euro/US Dollar (Major)
     #'GBPUSDm',  # British Pound/US Dollar (Major)
-    'XAGUSDm',  # Silver/US Dollar (Commodity)
+    #'XAGUSDm',  # Silver/US Dollar (Commodity)
     #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
     #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
     #'GBPTRYm',  # British Pound/Turkish Lira (Exotic)

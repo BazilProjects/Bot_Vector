@@ -1,4 +1,4 @@
-def get_trend_direction(, ema_length=10, macd_fast=12, macd_slow=26, macd_signal=9):
+def get_trend_direction(df, ema_length=10, macd_fast=12, macd_slow=26, macd_signal=9):
 
     # Calculate EMA
     df['EMA'] = ta.ema(df['close'], length=ema_length)
