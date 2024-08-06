@@ -35,7 +35,7 @@ symbol_list = [
     
 
 ]
-timeframe='15m'
+timeframe='30m'
 pages=8
 n_estimators=7
 min_samples_leaf=1

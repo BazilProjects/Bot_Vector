@@ -508,8 +508,8 @@ async def main2(timeframe,pages):
                     model_high,_ = joblib.load(f'Regressors/High/model{symbol}{timeframe}high.pkl')
 
 
-                    classifiers_15m, _= joblib.load(f'Classifiers/15m/ExtraTrees{symbol}.pkl')
-                    classifiers_30m,_ = joblib.load(f'Classifiers/30m/ExtraTrees{symbol}.pkl')
+                    classifiers_15m, _= joblib.load(f'Classifiers/15m/DecisionTree{symbol}.pkl')
+                    classifiers_30m,_ = joblib.load(f'Classifiers/30m/DecisionTree{symbol}.pkl')
 
                     next_close = model_close.predict(last_row)
                     next_low = model_low.predict(last_row)
@@ -554,7 +554,10 @@ async def main2(timeframe,pages):
                     
                     trend_direction=get_trend_direction(df_new)
                     if (classifiers_15m_pred==classifiers_30m_pred):
-                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9) and ((df_new['rsi'].iloc[-1]<=50) or (trend_direction==1 and df_new['rsi'].iloc[-1]<55)):
+                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.8) and (classifiers_30m_pred_proba>0.8) and ((df_new['rsi'].iloc[-1]<=50) or (trend_direction==1 and df_new['rsi'].iloc[-1]<55)):
+                            if next_close>next_high:
+                                next_close=next_high
+                                next_high=next_close
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
@@ -577,7 +580,10 @@ async def main2(timeframe,pages):
                                 except Exception as err:
                                     print('Trade failed with error:')
                                     print(api.format_error(err))
-                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9)  and ((df_new['rsi'].iloc[-1]>=50) or (trend_direction==-1 and df_new['rsi'].iloc[-1]>55)):
+                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.8) and (classifiers_30m_pred_proba>0.8)  and ((df_new['rsi'].iloc[-1]>=50) or (trend_direction==-1 and df_new['rsi'].iloc[-1]>55)):
+                            if next_close<next_low:
+                                next_close=next_low
+                                next_low=next_close
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
