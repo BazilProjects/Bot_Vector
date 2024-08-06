@@ -26,24 +26,7 @@ token = os.getenv('TOKEN') or 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJl
 accountId = os.getenv('ACCOUNT_ID') or '653d65c4-a70f-49ac-a6de-deea63238808'
 
 symbol_list = [
-    'XAUUSDm',  # Gold/US Dollar (Commodity)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    'BTCUSDm',
-    #'EURUSDm',  # Euro/US Dollar (Major)
-    #'GBPUSDm',  # British Pound/US Dollar (Major)
-    'XAGUSDm',  # Silver/US Dollar (Commodity)
-    #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
-    #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
-    #'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
-    #'USDCHFm',  # US Dollar/Swiss Franc (Major)
-    #'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    #'EURGBPm',  # Euro/British Pound (Minor)
-    #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    ##'EURCHFm',  # Euro/Swiss Franc (Minor)
-    #'EURAUDm',  # Euro/Australian Dollar (Minor)
-    #'EURCADm',  # Euro/Canadian Dollar (Minor)
+    'EURUSDm', 'GBPUSDm',
     
     
 

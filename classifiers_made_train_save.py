@@ -30,24 +30,7 @@ accountId = os.getenv('ACCOUNT_ID') or '7416410e-1803-4778-bead-73b66d695bb5'
 
 
 symbol_list = [
-    'XAUUSDm',  # Gold/US Dollar (Commodity)
-    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
-    'BTCUSDm',
-    #'EURUSDm',  # Euro/US Dollar (Major)
-    #'GBPUSDm',  # British Pound/US Dollar (Major)
-    'XAGUSDm',  # Silver/US Dollar (Commodity)
-    #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
-    #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
-    #'GBPTRYm',  # British Pound/Turkish Lira (Exotic)
-    #'USDCHFm',  # US Dollar/Swiss Franc (Major)
-    #'AUDUSDm',  # Australian Dollar/US Dollar (Major)
-    #'EURGBPm',  # Euro/British Pound (Minor)
-    #'GBPCHFm',  # British Pound/Swiss Franc (Minor)
-    #'AUDJPYm',  # Australian Dollar/Japanese Yen (Minor)
-    #'AUDNZDm',  # Australian Dollar/New Zealand Dollar (Minor)
-    ##'EURCHFm',  # Euro/Swiss Franc (Minor)
-    #'EURAUDm',  # Euro/Australian Dollar (Minor)
-    #'EURCADm',  # Euro/Canadian Dollar (Minor)
+    'EURUSDm', 'GBPUSDm',
     
     
 

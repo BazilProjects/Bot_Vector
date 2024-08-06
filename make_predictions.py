@@ -29,8 +29,8 @@ symbol_list = [
     'XAUUSDm',  # Gold/US Dollar (Commodity)
     'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
     'BTCUSDm',
-    #'EURUSDm',  # Euro/US Dollar (Major)
-    #'GBPUSDm',  # British Pound/US Dollar (Major)
+    'EURUSDm',  # Euro/US Dollar (Major)
+    'GBPUSDm',  # British Pound/US Dollar (Major)
     #'XAGUSDm',  # Silver/US Dollar (Commodity)
     #'AUDCHFm',  # Australian Dollar/Swiss Franc (Minor)
     #'NZDUSDm',  # New Zealand Dollar/US Dollar (Major)
@@ -554,7 +554,7 @@ async def main2(timeframe,pages):
                     
                     trend_direction=get_trend_direction(df_new)
                     if (classifiers_15m_pred==classifiers_30m_pred):
-                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9) and ((df_new['rsi'].iloc[-1]<=30) or (trend_direction==1 and df_new['rsi'].iloc[-1]<55)):
+                        if (classifiers_15m_pred==1) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9) and ((df_new['rsi'].iloc[-1]<=50) or (trend_direction==1 and df_new['rsi'].iloc[-1]<55)):
                             if (next_close > previous_close and
                                 (next_close>next_low) and
                                 (next_close - previous_close) > lag_size) and (next_close<next_high):
@@ -577,7 +577,7 @@ async def main2(timeframe,pages):
                                 except Exception as err:
                                     print('Trade failed with error:')
                                     print(api.format_error(err))
-                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9)  and ((df_new['rsi'].iloc[-1]>=70) or (trend_direction==-1 and df_new['rsi'].iloc[-1]>55)):
+                        elif (classifiers_15m_pred==0) and (classifiers_15m_pred_proba>0.9) and (classifiers_30m_pred_proba>0.9)  and ((df_new['rsi'].iloc[-1]>=50) or (trend_direction==-1 and df_new['rsi'].iloc[-1]>55)):
                             if (next_close<previous_close and 
                                 (next_close<next_high) and
                                 (previous_close-next_close)>lag_size) and (next_close<next_high):
