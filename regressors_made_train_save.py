@@ -26,15 +26,17 @@ token = os.getenv('TOKEN') or 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJl
 accountId = os.getenv('ACCOUNT_ID') or '653d65c4-a70f-49ac-a6de-deea63238808'
 
 symbol_list = [
-    'EURUSDm', 'GBPUSDm',
-    
-    
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
+    'BTCUSDm',
+    'EURUSDm',  # Euro/US Dollar (Major)
+    'GBPUSDm',  #
 
 ]
 
 data = {}
 timeframe='15m'
-pages=8
+pages=5
 n_estimators=1
 min_samples_leaf=1
 shuffle=True

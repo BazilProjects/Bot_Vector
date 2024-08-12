@@ -30,13 +30,15 @@ accountId = os.getenv('ACCOUNT_ID') or '7416410e-1803-4778-bead-73b66d695bb5'
 
 
 symbol_list = [
-    'EURUSDm', 'GBPUSDm',
-    
-    
+    'XAUUSDm',  # Gold/US Dollar (Commodity)
+    'GBPAUDm' ,  # British Pound/Australian Dollar (Minor)
+    'BTCUSDm',
+    'EURUSDm',  # Euro/US Dollar (Major)
+    'GBPUSDm',  #
 
 ]
-timeframe='30m'
-pages=8
+timeframe='15m'
+pages=5
 n_estimators=7
 min_samples_leaf=1
 max_depth=50
