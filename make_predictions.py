@@ -620,5 +620,5 @@ async def main2(timeframe,pages):
                 #print(f'{symbol} failed')
                 raise e
                 pass
-#def main():
-asyncio.run(main2(timeframe,pages))
+def main():
+    asyncio.run(main2(timeframe,pages))
