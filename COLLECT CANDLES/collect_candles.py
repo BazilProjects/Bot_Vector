@@ -83,7 +83,7 @@ async def get_candles_m(timeframe,symbol,pages):
         raise e
         
 async def main2():
-    for timeframe in ['5m','15m','30m','1h','4h','1d']:
+    for timeframe in ['5m',]:#'15m','30m','1h','4h','1d']:
         for symbol in symbol_list:
             try:
 

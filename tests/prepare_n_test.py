@@ -20,7 +20,7 @@ import pandas_ta as ta
 import os
 from docx import Document
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, max_error
-
+import docx
 from sklearn.linear_model import Ridge, Lasso, ElasticNet, BayesianRidge, HuberRegressor
 from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
@@ -35,14 +35,17 @@ accountId = os.getenv('ACCOUNT_ID') or '653d65c4-a70f-49ac-a6de-deea63238808'
 
 symbol_list = [
     'XAUUSDm',  # Gold/US Dollar (Commodity)
-    
+    'BTCUSDm',
+    'GBPAUDm',
+    'GBPUSDm',
+    'EURUSDm'
 ]
 """
     
 
 """
 data = {}
-timeframe='15m'
+timeframe='5m'
 pages=5
 n_estimators=1
 min_samples_leaf=1
@@ -76,6 +79,28 @@ def analyze_list(float_list):
     analysis['sum_of_fractional_parts'] = sum([x % 1 for x in float_list])
     
     return analysis
+def extract_simulation_values(currency_pair_file):
+    # Load the .docx file
+    doc = docx.Document(currency_pair_file)
+    
+    # Initialize variables to store extracted values
+    best_sma_10 = None
+    best_sma_30 = None
+    best_rsi_period = None
+    
+    # Iterate through each line in the document
+    for para in doc.paragraphs:
+        line = para.text.strip()
+        
+        # Extract values based on specific keywords
+        if "best_sma_10" in line:
+            best_sma_10 = line.split(":")[1].strip()
+        elif "best_sma_30" in line:
+            best_sma_30 = line.split(":")[1].strip()
+        elif "Best rsi_period" in line:
+            best_rsi_period = line.split(":")[1].strip()
+    
+    return best_sma_10, best_sma_30, best_rsi_period
 
 
 def is_prime(n):
@@ -156,14 +181,30 @@ async def main2(timeframe,pages):
 
             
             df=pd.read_csv(f'../COLLECT CANDLES/{timeframe}/{symbol}{timeframe}{str(pages)}.csv')
-            df=df.head(5500).reset_index()
+            #df=df.head(5000).reset_index()
             #print(df)
             if not df.empty:
                 print(f'Symbol: {symbol}')
-                #df['close'] = df['close'].rolling(window=5).mean()
+                currency_pairs = [
+                    "GBPUSDm0.001_simulation_analysis.docx",
+                    "EURUSDm0.0007_simulation_analysis.docx",
+                    "BTCUSDm600_simulation_analysis.docx",
+                    "XAUUSDm4_simulation_analysis.docx",
+                    "GBPAUDm0.0015_simulation_analysis.docx"
+                ]
 
-                #df['close'] = df['close'].ewm(span=5).mean()
-                added_lag=8
+
+                # Loop through each currency pair file
+                for pair_file in currency_pairs:
+                    if symbol==pair_file[:7]:
+                        added_lag=pair_file[:-25]
+                        added_lag=float(added_lag[7:])
+
+                        full_path = os.path.join('', pair_file)
+    
+                # Extract the values from the file
+                best_sma_10, best_sma_30, best_rsi_period = extract_simulation_values(full_path)
+                #added_lag=4
                 df_new=prepare(df)
                 dt=pd.DataFrame(df_new)
                 # Print all combinations
@@ -180,12 +221,13 @@ async def main2(timeframe,pages):
                 df_new['Canlde_open']=df_new['open'].shift(-1)
                 #df_new['Failure']=(df_new['close'].std()>29.280487294763798).astype(int)
                 
+                
                 # Create labels: 1 for 'buy' (next close is higher), 0 for 'sell' (next close is lower)
                 df_new['Label_close'] = (df_new['Candle_close'] > df_new['close']).astype(int)
                 df_new['Label_open'] = (df_new['Canlde_open'] > df_new['Candle_close']).astype(int)
-                df_new['RSI'] = ta.rsi(df_new['close'], length=25)
-                df_new['sma_10'] = ta.sma(df['close'], length=50)
-                df_new['sma_30'] = ta.sma(df['close'], length=20)
+                df_new['RSI'] = ta.rsi(df_new['close'], length=int(best_rsi_period))
+                df_new['sma_10'] = ta.sma(df['close'], length=int(best_sma_10))
+                df_new['sma_30'] = ta.sma(df['close'], length=int(best_sma_30))
                 # Buy Signal: When sma_10 crosses above sma_30
                 df_new['buy_signal'] = ((df_new['sma_10'] > df_new['sma_30']) & 
                                         (df_new['sma_10'].shift(1) <= df_new['sma_30'].shift(1))).astype(int)
@@ -239,8 +281,8 @@ async def main2(timeframe,pages):
                 print(f"R2 Score: {r2:.2f}%")
                 print(f"Mean Absolute Error: {mae}")
                 print("-" * 30)
-
-
+                model.fit(X,y)
+                joblib.dump((model, sklearn.__version__), f'Regressors/{timeframe}/{symbol}model.pkl')
                 total_expected_trade=0
                 total_expected_wins=0
                 total_expected_losses=0
@@ -260,7 +302,7 @@ async def main2(timeframe,pages):
                     stop_loss_away=float(y_pred[i][1])
                     
 
-                    if current_close>previous_close and rsi<50 and sma_10>sma_30 and (current_close-current_open)>(added_lag*2):
+                    if current_close>previous_close and rsi<50 and sma_10>sma_30 and (pred_close-current_open)>(added_lag*2):
                         if pred_close>=current_close and (current_open-current_low)<stop_loss_away:
                             total_expected_wins=total_expected_wins+1
                             stop_loss=current_open-current_low
@@ -270,7 +312,7 @@ async def main2(timeframe,pages):
                             total_expected_losses=total_expected_losses+1
                             
                         total_expected_trade=total_expected_trade+1
-                    elif current_close<previous_close and rsi>50 and sma_10<sma_30  and (current_open-current_close)>(added_lag*2):
+                    elif current_close<previous_close and rsi>50 and sma_10<sma_30  and (current_open-pred_close)>(added_lag*2):
                         
                         if pred_close<=current_close and (current_high-current_open)<stop_loss_away:
                             total_expected_wins=total_expected_wins+1
@@ -287,25 +329,11 @@ async def main2(timeframe,pages):
                 print(f"Total Expected Losses: {total_expected_losses}")
                 print(f'Buy max stop:  {biggest_buy_stop_loss}')
                 print(f'Sell max stop:   {biggest_sell_stop_loss}')
-                doc = Document()
-                doc.add_heading(f'{symbol} Simulation Analysis', level=1)
 
-                # Add simulation results
-                doc.add_heading('Best Results:', level=2)
-                doc.add_paragraph(f'Total Expected Trade: {total_expected_trade}')
-                doc.add_paragraph(f'Total Expected Wins: {total_expected_wins}')
-                doc.add_paragraph(f'Total Expected Losses: {total_expected_losses}')
-                doc.add_paragraph(f'Buy max stop:  {biggest_buy_stop_loss}')
-                doc.add_paragraph(f'Sell max stop:   {biggest_sell_stop_loss}')
-                # Save the document
-                doc_path = f'{symbol}{added_lag}_simulation_analysis.docx'
-                doc.save(doc_path)
-
-                print(f'Document saved as {doc_path}')
 
         except Exception as e:
             #print(f'{symbol} failed')
             raise e
             pass
-
+        print("__"*100)
 asyncio.run(main2(timeframe,pages))
